@@ -104,6 +104,47 @@ public final class ValueCompressonHolder {
 
     }
   }
+  
+  
+  /**
+   * @param dataType
+   * @param value
+   * @param data
+   */
+  public static void unCompress(DataType dataType, UnCompressValue value, byte[] data, int limit, boolean descSortFlg) {
+    switch (dataType) {
+      case DATA_BYTE:
+
+        value.setValue(byteCompressor.unCompress(data, limit, descSortFlg));
+        break;
+
+      case DATA_SHORT:
+
+        value.setValue(shortCompressor.unCompress(data, limit, descSortFlg));
+        break;
+
+      case DATA_INT:
+
+        value.setValue(intCompressor.unCompress(data, limit, descSortFlg));
+        break;
+
+      case DATA_LONG:
+      case DATA_BIGINT:
+
+        value.setValue(longCompressor.unCompress(data, limit, descSortFlg));
+        break;
+
+      case DATA_FLOAT:
+
+        value.setValue(floatCompressor.unCompress(data, limit, descSortFlg));
+        break;
+      default:
+
+        value.setValue(doubleCompressor.unCompress(data, limit, descSortFlg));
+        break;
+
+    }
+  }
 
   /**
    * interface for  UnCompressValue<T>.
@@ -123,6 +164,8 @@ public final class ValueCompressonHolder {
     UnCompressValue compress();
 
     UnCompressValue uncompress(DataType dataType);
+    
+    UnCompressValue uncompress(DataType dataType, int limit, boolean descSortFlg);
 
     byte[] getBackArrayData();
 

@@ -25,6 +25,7 @@ import org.apache.carbondata.core.carbon.datastore.chunk.reader.DimensionColumnC
 import org.apache.carbondata.core.carbon.datastore.chunk.reader.MeasureColumnChunkReader;
 import org.apache.carbondata.core.carbon.datastore.chunk.reader.dimension.CompressedDimensionChunkFileBasedReader;
 import org.apache.carbondata.core.carbon.datastore.chunk.reader.measure.CompressedMeasureChunkFileBasedReader;
+import org.apache.carbondata.core.carbon.metadata.blocklet.datachunk.DataChunk;
 import org.apache.carbondata.core.carbon.metadata.blocklet.index.BlockletMinMaxIndex;
 import org.apache.carbondata.core.datastorage.store.FileHolder;
 import org.apache.carbondata.core.datastorage.store.compression.ValueCompressionModel;
@@ -67,6 +68,14 @@ public class BlockletBTreeLeafNode extends AbstractBTreeLeafNode {
     numberOfKeys = builderInfos.getFooterList().get(0).getBlockletList().get(leafIndex)
         .getNumberOfRows();
     // create a instance of dimension chunk
+    //TODO
+/*    synchronized(this.getClass()){
+    	System.out.println(builderInfos.getFooterList().get(0).getBlockInfo().getTableBlockInfo().getFilePath());
+	    for(DataChunk d: builderInfos.getFooterList().get(0).getBlockletList().get(leafIndex).getDimensionColumnChunk()){
+	    	
+	    	System.out.println(d.getEncodingList());
+	    }
+    }*/
     dimensionChunksReader = new CompressedDimensionChunkFileBasedReader(
         builderInfos.getFooterList().get(0).getBlockletList().get(leafIndex)
             .getDimensionColumnChunk(), builderInfos.getDimensionColumnValueSize(),
@@ -76,11 +85,13 @@ public class BlockletBTreeLeafNode extends AbstractBTreeLeafNode {
         builderInfos.getFooterList().get(0).getBlockletList().get(leafIndex)
             .getMeasureColumnChunk());
     // create a instance of measure column chunk reader
+    this.filePath = builderInfos.getFooterList().get(0).getBlockInfo().getTableBlockInfo().getFilePath();
     measureColumnChunkReader = new CompressedMeasureChunkFileBasedReader(
         builderInfos.getFooterList().get(0).getBlockletList().get(leafIndex)
             .getMeasureColumnChunk(), valueCompressionModel,
-            builderInfos.getFooterList().get(0).getBlockInfo().getTableBlockInfo().getFilePath());
+            filePath);
     this.nodeNumber = nodeNumber;
+ 
   }
 
   /**
@@ -95,6 +106,18 @@ public class BlockletBTreeLeafNode extends AbstractBTreeLeafNode {
     return dimensionChunksReader.readDimensionChunks(fileReader, blockIndexes);
   }
 
+  //TODO
+  /**
+   * Below method will be used to get the dimension chunks
+   *
+   * @param fileReader   file reader to read the chunks from file
+   * @param blockIndexes indexes of the blocks need to be read
+   * @return dimension data chunks
+   */
+  @Override public DimensionColumnDataChunk[] getDimensionChunksForSort(FileHolder fileReader, int[] sortDimentionblockIndexes, int limit, boolean descSortFlg) {
+    return dimensionChunksReader.readDimensionChunksForSort(sortDimentionblockIndexes, fileReader, this.numberOfKeys, limit, descSortFlg);
+  }
+  
   /**
    * Below method will be used to get the dimension chunk
    *
@@ -103,9 +126,18 @@ public class BlockletBTreeLeafNode extends AbstractBTreeLeafNode {
    * @return dimension data chunk
    */
   @Override public DimensionColumnDataChunk getDimensionChunk(FileHolder fileReader,
-      int blockIndex) {
+      int blockIndex, int limit) {
     return dimensionChunksReader.readDimensionChunk(fileReader, blockIndex);
   }
+
+
+  @Override
+  public DimensionColumnDataChunk getDimensionChunk(FileHolder fileReader, int blockIndex, int limit,
+  		int maxLogicalRowId, boolean descSortFlg) {
+  	
+  	return dimensionChunksReader.readDimensionChunkForFilter(fileReader, blockIndex, limit, maxLogicalRowId, descSortFlg);
+  }
+
 
   /**
    * Below method will be used to get the measure chunk
@@ -115,7 +147,10 @@ public class BlockletBTreeLeafNode extends AbstractBTreeLeafNode {
    * @return measure column data chunk
    */
   @Override public MeasureColumnDataChunk[] getMeasureChunks(FileHolder fileReader,
-      int[] blockIndexes) {
+      int[] blockIndexes, int limit) {
+	  if(limit>0 &&limit<this.numberOfKeys){
+		  return measureColumnChunkReader.readMeasureChunks(limit, fileReader, blockIndexes);
+	  }
     return measureColumnChunkReader.readMeasureChunks(fileReader, blockIndexes);
   }
 
@@ -129,4 +164,11 @@ public class BlockletBTreeLeafNode extends AbstractBTreeLeafNode {
   @Override public MeasureColumnDataChunk getMeasureChunk(FileHolder fileReader, int blockIndex) {
     return measureColumnChunkReader.readMeasureChunk(fileReader, blockIndex);
   }
+
+@Override
+public MeasureColumnDataChunk getMeassureChunk(FileHolder fileReader, int blockIndex, int limit) {
+    return measureColumnChunkReader.readMeasureChunk(limit, fileReader, blockIndex);
+}
+
+
 }

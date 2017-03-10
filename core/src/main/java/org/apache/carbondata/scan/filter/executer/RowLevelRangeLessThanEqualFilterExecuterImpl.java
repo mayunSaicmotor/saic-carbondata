@@ -84,7 +84,7 @@ public class RowLevelRangeLessThanEqualFilterExecuterImpl extends RowLevelFilter
         .get(dimColEvaluatorInfoList.get(0).getColumnIndex());
     if (null == blockChunkHolder.getDimensionDataChunk()[blockIndex]) {
       blockChunkHolder.getDimensionDataChunk()[blockIndex] = blockChunkHolder.getDataBlock()
-          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex);
+          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex, blockChunkHolder.getLimit());
     }
     return getFilteredIndexes(blockChunkHolder.getDimensionDataChunk()[blockIndex],
         blockChunkHolder.getDataBlock().nodeSize());

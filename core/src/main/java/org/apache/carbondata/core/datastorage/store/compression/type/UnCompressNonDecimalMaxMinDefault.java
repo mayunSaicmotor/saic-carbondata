@@ -105,5 +105,9 @@ public class UnCompressNonDecimalMaxMinDefault implements UnCompressValue<double
     holder.setReadableDoubleValues(vals);
     return holder;
   }
-
+  @Override
+  public UnCompressValue uncompress(DataType dataType, int limit, boolean descSortFlg) {
+  	// TODO Auto-generated method stub
+  	return null;
+  }
 }

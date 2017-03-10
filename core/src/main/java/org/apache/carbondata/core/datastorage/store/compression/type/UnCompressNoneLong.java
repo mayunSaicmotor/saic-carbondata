@@ -26,8 +26,10 @@ import org.apache.carbondata.common.logging.LogServiceFactory;
 import org.apache.carbondata.core.datastorage.store.compression.Compressor;
 import org.apache.carbondata.core.datastorage.store.compression.SnappyCompression;
 import org.apache.carbondata.core.datastorage.store.compression.ValueCompressonHolder;
+import org.apache.carbondata.core.datastorage.store.compression.ValueCompressonHolder.UnCompressValue;
 import org.apache.carbondata.core.datastorage.store.dataholder.CarbonReadDataHolder;
 import org.apache.carbondata.core.util.ValueCompressionUtil;
+import org.apache.carbondata.core.util.ValueCompressionUtil.DataType;
 
 public class UnCompressNoneLong implements ValueCompressonHolder.UnCompressValue<long[]> {
   /**
@@ -46,6 +48,7 @@ public class UnCompressNoneLong implements ValueCompressonHolder.UnCompressValue
   protected long[] value;
 
   @Override public void setValue(long[] value) {
+	  //System.out.print("setValue[0]"+value[0]);
     this.value = value;
 
   }
@@ -97,5 +100,9 @@ public class UnCompressNoneLong implements ValueCompressonHolder.UnCompressValue
     dataHolder.setReadableDoubleValues(vals);
     return dataHolder;
   }
-
+  @Override
+  public UnCompressValue uncompress(DataType dataType, int limit, boolean descSortFlg) {
+  	// TODO Auto-generated method stub
+  	return null;
+  }
 }

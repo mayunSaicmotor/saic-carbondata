@@ -53,7 +53,7 @@ public class IncludeFilterExecuterImpl implements FilterExecuter {
         .get(dimColumnEvaluatorInfo.getColumnIndex());
     if (null == blockChunkHolder.getDimensionDataChunk()[blockIndex]) {
       blockChunkHolder.getDimensionDataChunk()[blockIndex] = blockChunkHolder.getDataBlock()
-          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex);
+          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex, blockChunkHolder.getNodeSize());
     }
     return getFilteredIndexes(blockChunkHolder.getDimensionDataChunk()[blockIndex],
         blockChunkHolder.getDataBlock().nodeSize());
@@ -70,8 +70,10 @@ public class IncludeFilterExecuterImpl implements FilterExecuter {
       return setFilterdIndexToBitSetWithColumnIndex(
           (FixedLengthDimensionDataChunk) dimensionColumnDataChunk, numerOfRows);
     }
-
-    return setFilterdIndexToBitSet(dimensionColumnDataChunk, numerOfRows);
+	  //long start = System.currentTimeMillis();
+    BitSet bset =setFilterdIndexToBitSet(dimensionColumnDataChunk, numerOfRows);
+    //System.out.println("getFilteredIndexes: "+(System.currentTimeMillis() - start));
+    return bset;
   }
 
   private BitSet setDirectKeyFilterIndexToBitSet(
@@ -155,20 +157,45 @@ public class IncludeFilterExecuterImpl implements FilterExecuter {
 
   private BitSet setFilterdIndexToBitSet(DimensionColumnDataChunk dimensionColumnDataChunk,
       int numerOfRows) {
+
     BitSet bitSet = new BitSet(numerOfRows);
+    //BitSet bitSet1 = new BitSet(numerOfRows);
+    
     if (dimensionColumnDataChunk instanceof FixedLengthDimensionDataChunk) {
       FixedLengthDimensionDataChunk fixedDimensionChunk =
           (FixedLengthDimensionDataChunk) dimensionColumnDataChunk;
       byte[][] filterValues = dimColumnExecuterInfo.getFilterKeys();
+      byte[] dataChunk= fixedDimensionChunk.getCompleteDataChunk();
+
+	  //long start = System.currentTimeMillis();
+      int startIndex = 0;
+      for (int k = 0; k < filterValues.length; k++) {
+    	  
+    	  int[] index = ByteUtil.UnsafeComparer.INSTANCE.binaryRangeSearch(dataChunk, startIndex, dataChunk.length, filterValues[k]);
+    	  for(int i = index[0]; i<=index[1];i++){
+    		  
+    		  bitSet.set(i);
+    	  }
+    	  if(index[1] > index[0]){
+    		  startIndex = index[1];
+    	  }
+      }
+  
+      //below comments code is used to confirm the binary range search is correct  
+/*      System.out.println("optimizied time: "+(System.currentTimeMillis() - start));
+
+	  start = System.currentTimeMillis();
       for (int k = 0; k < filterValues.length; k++) {
         for (int j = 0; j < numerOfRows; j++) {
           if (ByteUtil.UnsafeComparer.INSTANCE
               .compareTo(fixedDimensionChunk.getCompleteDataChunk(), j * filterValues[k].length,
                   filterValues[k].length, filterValues[k], 0, filterValues[k].length) == 0) {
-            bitSet.set(j);
+            bitSet1.set(j);
           }
         }
-      }
+      }  
+      System.out.println("non-optimized time: "+(System.currentTimeMillis() - start));
+      System.out.println("set equal: " + bitSet.equals(bitSet1));*/  
     }
     return bitSet;
   }

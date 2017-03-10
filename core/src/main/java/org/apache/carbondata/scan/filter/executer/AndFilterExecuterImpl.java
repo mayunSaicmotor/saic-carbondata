@@ -35,15 +35,23 @@ public class AndFilterExecuterImpl implements FilterExecuter {
 
   @Override public BitSet applyFilter(BlocksChunkHolder blockChunkHolder)
       throws FilterUnsupportedException {
+	  
+	    //long start = System.currentTimeMillis();
     BitSet leftFilters = leftExecuter.applyFilter(blockChunkHolder);
     if (leftFilters.isEmpty()) {
       return leftFilters;
     }
+    //System.out.println("left: "+(System.currentTimeMillis() - start));
+    //start = System.currentTimeMillis();
+    
     BitSet rightFilter = rightExecuter.applyFilter(blockChunkHolder);
     if (rightFilter.isEmpty()) {
       return rightFilter;
     }
+    //System.out.println("right: "+(System.currentTimeMillis() - start));
+     //start = System.currentTimeMillis();
     leftFilters.and(rightFilter);
+    //System.out.println("left and right: "+(System.currentTimeMillis() - start));
     return leftFilters;
   }
 

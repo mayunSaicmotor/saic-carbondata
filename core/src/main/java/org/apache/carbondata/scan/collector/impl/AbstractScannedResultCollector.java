@@ -154,4 +154,15 @@ public abstract class AbstractScannedResultCollector implements ScannedResultCol
     }
   }
 
+  
+  
+  /**
+   * This method will add a record both key and value to list object
+   * it will keep track of how many record is processed, to handle limit scenario
+   */
+  //TODO
+  @Override public List<Object[]> collectSortedData(AbstractScannedResult scannedResult, int batchSize, String nextSortDimentionKey) {
+	  
+	  return null;
+  }
 }

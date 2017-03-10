@@ -26,6 +26,7 @@ import org.apache.carbondata.common.logging.LogServiceFactory;
 import org.apache.carbondata.core.datastorage.store.compression.Compressor;
 import org.apache.carbondata.core.datastorage.store.compression.SnappyCompression;
 import org.apache.carbondata.core.datastorage.store.compression.ValueCompressonHolder;
+import org.apache.carbondata.core.datastorage.store.compression.ValueCompressonHolder.UnCompressValue;
 import org.apache.carbondata.core.datastorage.store.dataholder.CarbonReadDataHolder;
 import org.apache.carbondata.core.util.ValueCompressionUtil;
 import org.apache.carbondata.core.util.ValueCompressionUtil.DataType;
@@ -97,5 +98,9 @@ public class UnCompressNoneInt implements ValueCompressonHolder.UnCompressValue<
     dataHolderInfoObj.setReadableDoubleValues(vals);
     return dataHolderInfoObj;
   }
-
+  @Override
+  public UnCompressValue uncompress(DataType dataType, int limit, boolean descSortFlg) {
+  	// TODO Auto-generated method stub
+  	return null;
+  }
 }

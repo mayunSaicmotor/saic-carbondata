@@ -66,6 +66,12 @@ public class UnCompressNoneByte implements UnCompressValue<byte[]> {
     return byte1;
   }
 
+  @Override public UnCompressValue uncompress(DataType dataType, int limit, boolean descSortFlg) {
+	    UnCompressValue byte1 = ValueCompressionUtil.unCompressNone(dataType, dataType);
+	    ValueCompressonHolder.unCompress(dataType, byte1, value, limit, descSortFlg);
+	    return byte1;
+	  }
+  
   @Override public UnCompressValue compress() {
     UnCompressNoneByte byte1 = new UnCompressNoneByte();
     byte1.setValue(byteCompressor.compress(value));

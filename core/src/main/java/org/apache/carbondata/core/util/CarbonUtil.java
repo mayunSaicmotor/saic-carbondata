@@ -645,6 +645,38 @@ public final class CarbonUtil {
     return UnBlockIndexer.uncompressIndex(numberCompressor.unCompress(indexData),
         numberCompressor.unCompress(indexMap));
   }
+  
+  public static int[] getUnCompressColumnIndex(int totalLength, byte[] columnIndexData,
+	      NumberCompressor numberCompressor, int limit, boolean descSortFlg) {
+	  
+	  
+	  if(descSortFlg || CarbonCommonConstants.SNAPPY_UNCOMRESS_NO_LIMIT_FLG){
+		  return getUnCompressColumnIndex(totalLength, columnIndexData,numberCompressor);
+	  }
+	    ByteBuffer buffer = ByteBuffer.wrap(columnIndexData);
+	    buffer.rewind();
+	    int indexDataLength = buffer.getInt();
+	    byte[] indexData = new byte[indexDataLength];
+	    byte[] indexMap =
+	        new byte[totalLength - indexDataLength - CarbonCommonConstants.INT_SIZE_IN_BYTE];
+	    buffer.get(indexData);
+	    buffer.get(indexMap);
+	    
+	    // according to limit size to get indexes
+	    int[] indexes = null;
+
+	    indexes = numberCompressor.unCompress(indexData, limit, descSortFlg);
+	    
+	    if(indexMap.length == 0){	    
+		    return indexes;
+	    }
+	   // if(descSortFlg){
+	        return UnBlockIndexer.uncompressIndex(numberCompressor.unCompress(indexData),
+	    	        numberCompressor.unCompress(indexMap));
+//	    }
+//	    return UnBlockIndexer.uncompressIndex(numberCompressor.unCompress(indexData),
+//	        numberCompressor.unCompress(indexMap), limit);
+	  }
 
   /**
    * Convert int array to Integer list

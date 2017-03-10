@@ -718,7 +718,7 @@ public class QueryUtil {
           .setDimension(carbonTable.getDimensionByName(tableName, queryDimension.getColumnName()));
     }
     // resolve sort dimension
-    for (QueryDimension sortDimension : queryModel.getSortDimension()) {
+    for (QueryDimension sortDimension : queryModel.getSortDimensions()) {
       sortDimension
           .setDimension(carbonTable.getDimensionByName(tableName, sortDimension.getColumnName()));
     }

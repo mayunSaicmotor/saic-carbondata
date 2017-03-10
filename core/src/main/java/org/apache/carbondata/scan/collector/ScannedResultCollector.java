@@ -34,5 +34,9 @@ public interface ScannedResultCollector {
    * @return how many records was aggregated
    */
   List<Object[]> collectData(AbstractScannedResult scannedResult, int batchSize);
+  
+  
+  //For sort by dimention
+   List<Object[]> collectSortedData(AbstractScannedResult scannedResult, int batchSize, String nextSortDimentionKey);
 
 }

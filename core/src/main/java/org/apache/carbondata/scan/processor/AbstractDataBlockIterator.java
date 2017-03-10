@@ -18,6 +18,7 @@
  */
 package org.apache.carbondata.scan.processor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.carbondata.common.CarbonIterator;
@@ -69,13 +70,16 @@ public abstract class AbstractDataBlockIterator extends CarbonIterator<List<Obje
    * to hold the data block
    */
   protected BlocksChunkHolder blocksChunkHolder;
+  
+  //TODO for sort
+  protected  List<BlocksChunkHolder> blocksChunkHolderList;
 
   /**
    * batch size of result
    */
   protected int batchSize;
 
-  protected AbstractScannedResult scannedResult;
+  public AbstractScannedResult scannedResult;
 
   QueryStatisticsModel queryStatisticsModel;
 
@@ -140,5 +144,20 @@ public abstract class AbstractDataBlockIterator extends CarbonIterator<List<Obje
     return null;
   }
 
+  
+  /**
+   * TODO It scans the block and returns the result with @batchSize
+   *
+   * @return Result of @batchSize
+   */
+  public AbstractScannedResult nextScannedResult() {
+    
+    if (updateScanner()) {
+      return scannedResult;
+    } else {
+      return null;
+    }
+  }
+  
 
 }

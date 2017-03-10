@@ -88,5 +88,52 @@ public class CompressedMeasureChunkFileBasedReader extends AbstractMeasureChunkR
         .setNullValueIndexHolder(measureColumnChunk.get(blockIndex).getNullValueIndexForColumn());
     return datChunk;
   }
+  
+  
+  /**
+   * Method to read the blocks data based on block indexes
+   *
+   * @param fileReader   file reader to read the blocks
+   * @param blockIndexes blocks to be read
+   * @return measure data chunks
+   */
+  @Override public MeasureColumnDataChunk[] readMeasureChunks(int limit, FileHolder fileReader,
+      int... blockIndexes) {
+    MeasureColumnDataChunk[] datChunk = new MeasureColumnDataChunk[values.length];
+    for (int i = 0; i < blockIndexes.length; i++) {
+      datChunk[blockIndexes[i]] = readMeasureChunk(limit, fileReader, blockIndexes[i]);
+    }
+    return datChunk;
+  }
+
+  /**
+   * Method to read the blocks data based on block index
+   *
+   * @param fileReader file reader to read the blocks
+   * @param blockIndex block to be read
+   * @return measure data chunk
+   */
+  @Override public MeasureColumnDataChunk readMeasureChunk(int limit, FileHolder fileReader, int blockIndex) {
+    MeasureColumnDataChunk datChunk = new MeasureColumnDataChunk();
+    // create a new uncompressor
+    ValueCompressonHolder.UnCompressValue copy = values[blockIndex].getNew();
+    // read data from file and set to uncompressor
+    copy.setValue(fileReader
+        .readByteArray(filePath, measureColumnChunk.get(blockIndex).getDataPageOffset(),
+            measureColumnChunk.get(blockIndex).getDataPageLength()));
+    // get the data holder after uncompressing
+    //System.out.println("read measure limit: " + limit);
+    CarbonReadDataHolder measureDataHolder =
+        //TODO TODO TODO TODO TODO TODO copy.uncompress(compressionModel.getChangedDataType()[blockIndex], limit)
+    		copy.uncompress(compressionModel.getChangedDataType()[blockIndex])
+            .getValues(compressionModel.getDecimal()[blockIndex],
+                compressionModel.getMaxValue()[blockIndex]);
+    // set the data chunk
+    datChunk.setMeasureDataHolder(measureDataHolder);
+    // set the enun value indexes
+    datChunk
+        .setNullValueIndexHolder(measureColumnChunk.get(blockIndex).getNullValueIndexForColumn());
+    return datChunk;
+  }
 
 }

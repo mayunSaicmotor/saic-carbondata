@@ -34,12 +34,15 @@ import org.apache.carbondata.core.util.CarbonProperties
 import org.apache.carbondata.scan.model._
 import org.apache.carbondata.spark.{CarbonFilters, RawValue, RawValueImpl}
 import org.apache.carbondata.spark.rdd.CarbonScanRDD
+import org.apache.spark.sql.types.IntegerType
 
 case class CarbonScan(
     var attributesRaw: Seq[Attribute],
     relationRaw: CarbonRelation,
     dimensionPredicatesRaw: Seq[Expression],
-    useUnsafeCoversion: Boolean = true)(@transient val ocRaw: SQLContext) extends LeafNode {
+    useUnsafeCoversion: Boolean = true,
+    sorts: Seq[SortOrder]=Nil, 
+    limitValue: Int = 0)(@transient val ocRaw: SQLContext) extends LeafNode {
   val carbonTable = relationRaw.metaData.carbonTable
   val selectedDims = scala.collection.mutable.MutableList[QueryDimension]()
   val selectedMsrs = scala.collection.mutable.MutableList[QueryMeasure]()
@@ -50,8 +53,33 @@ case class CarbonScan(
 
   val buildCarbonPlan: CarbonQueryPlan = {
     val plan: CarbonQueryPlan = new CarbonQueryPlan(relationRaw.databaseName, relationRaw.tableName)
-
-    plan.setSortedDimemsions(new ArrayList[QueryDimension])
+    
+    //TODO
+    //var orderedDims = new ArrayList[QueryDimension];
+      def getCarbonSortDirection(sortDirection: SortDirection) = {
+      sortDirection match {
+        case Descending => SortOrderType.DSC
+        case Ascending => SortOrderType.ASC
+        case _ => SortOrderType.ASC
+      }
+    }   
+    //var orderedDims1 = sorts.map(x => x.child.prettyString).asJava
+    var orderedDims = sorts.map {
+      x => 
+      var t = x.child.references
+      var t1 = t.iterator.next()
+      var t2 = t1.name
+      var qd = new QueryDimension(t2)
+      qd.setSortOrder(getCarbonSortDirection(x.direction))
+     // var queryId :IntegerType= x.child.dataType.asInstanceOf[IntegerType]
+     // qd.setQueryOrder(queryId.integral.to) 
+      qd   
+    }.asJava
+    
+    
+    //plan.setSortedDimemsions(new ArrayList[QueryDimension])
+    plan.setSortedDimemsions(orderedDims)
+    plan.setLimit(limitValue)
 
     plan.setOutLocationPath(
       CarbonProperties.getInstance().getProperty(CarbonCommonConstants.STORE_LOCATION_HDFS))

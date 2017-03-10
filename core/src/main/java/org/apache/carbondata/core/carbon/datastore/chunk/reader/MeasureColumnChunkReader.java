@@ -43,5 +43,25 @@ public interface MeasureColumnChunkReader {
    * @return measure data chunk
    */
   MeasureColumnDataChunk readMeasureChunk(FileHolder fileReader, int blockIndex);
+  
+  
+  /**
+   * Method to read the blocks data based on block indexes
+   *
+   * @param fileReader   file reader to read the blocks
+   * @param blockIndexes blocks to be read
+   * @return measure data chunks
+   */
+  MeasureColumnDataChunk[] readMeasureChunks(int limit, FileHolder fileReader, int... blockIndexes);
+
+  /**
+   * Method to read the blocks data based on block index
+   *
+   * @param fileReader file reader to read the blocks
+   * @param blockIndex block to be read
+   * @return measure data chunk
+   */
+  MeasureColumnDataChunk readMeasureChunk(int limit, FileHolder fileReader, int blockIndex);
+
 
 }

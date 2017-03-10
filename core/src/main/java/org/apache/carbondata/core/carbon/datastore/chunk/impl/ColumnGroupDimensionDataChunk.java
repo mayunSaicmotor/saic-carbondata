@@ -107,6 +107,12 @@ public class ColumnGroupDimensionDataChunk implements DimensionColumnDataChunk<b
     return data;
   }
 
+	@Override
+	public byte[] getChunkDataByPhysicalRowId(int physicalRowId) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unsupported operation");
+	}
+	
   /**
    * Below method will be used get the chunk attributes
    *
@@ -125,4 +131,24 @@ public class ColumnGroupDimensionDataChunk implements DimensionColumnDataChunk<b
   @Override public byte[] getCompleteDataChunk() {
     return dataChunk;
   }
+  
+  /**
+   * TODO Below method will be used to return the total row number
+   *
+   * @return total row number
+   */
+  @Override public int getTotalRowNumber() {
+    return dataChunk.length/chunkAttributes.getColumnValueSize();
+  }
+  
+	// TODO
+	@Override
+	public void setCompleteRleDataChunk(int[] rleDataChunk) {
+		// this.rleDataChunk = rleDataChunk;
+	}
+
+	@Override
+	public int[] getCompleteRleDataChunk() {
+		return null;
+	}
 }

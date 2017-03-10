@@ -41,7 +41,7 @@ public class ComplexQueryType {
   public void fillRequiredBlockData(BlocksChunkHolder blockChunkHolder) {
     if (null == blockChunkHolder.getDimensionDataChunk()[blockIndex]) {
       blockChunkHolder.getDimensionDataChunk()[blockIndex] = blockChunkHolder.getDataBlock()
-          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex);
+          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex, blockChunkHolder.getLimit());
     }
     children.fillRequiredBlockData(blockChunkHolder);
   }
@@ -74,7 +74,7 @@ public class ComplexQueryType {
   protected void readBlockDataChunk(BlocksChunkHolder blockChunkHolder) {
     if (null == blockChunkHolder.getDimensionDataChunk()[blockIndex]) {
       blockChunkHolder.getDimensionDataChunk()[blockIndex] = blockChunkHolder.getDataBlock()
-          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex);
+          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex, blockChunkHolder.getLimit());
     }
   }
 }

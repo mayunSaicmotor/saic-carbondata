@@ -19,6 +19,8 @@
 
 package org.apache.carbondata.core.keygenerator.mdkey;
 
+import org.apache.carbondata.core.constants.CarbonCommonConstants;
+
 /**
  * It compresses the data as per max cardinality. It takes only the required bits for each key.
  */
@@ -147,6 +149,27 @@ public class NumberCompressor {
     return getArray(words, arrayLength);
   }
 
+  public int[] unCompress(byte[] key, int limit, boolean descSortFlg) {
+	  
+	  if(descSortFlg || CarbonCommonConstants.SNAPPY_UNCOMRESS_NO_LIMIT_FLG){
+		 return   unCompress(key);
+	  }
+	    int ls = key.length;
+	    int arrayLength = (ls * BYTE_LENGTH) / bitsLength;
+/*	    if(limit < arrayLength){
+	    	arrayLength = limit;    	
+	    }*/
+	    long[] words = new long[getWordsSizeFromBytesSize(ls)];
+	    unCompressVal(key, ls, words);
+	    
+	    //TODO
+/*	    if(descSortFlg){
+	    	return getArray(words, arrayLength);
+	    }*/
+	    return getArray(words, arrayLength, limit, descSortFlg);
+	    
+  }
+  
   private void unCompressVal(byte[] key, int ls, long[] words) {
     for (int i = 0; i < words.length; i++) {
       long l = 0;
@@ -193,6 +216,83 @@ public class NumberCompressor {
     }
     return vals;
   }
+  
+  private int[] getArray(long[] words, int arrayLength, int limit, boolean descSortFlg) {
+	  
+	  	int diff = arrayLength - limit;
+	  	int returnSize = limit;
+	  	if(diff<0){
+	  		returnSize =arrayLength;
+	  		diff = 0;
+	  	}
+	  	
+	    int[] vals = new int[returnSize];
+	    int ll = 0;
+	    long globalMask = LONG_MAX >>> (MAX_LENGTH - bitsLength);
+          
+          if(descSortFlg){
+        	  
+      	    for (int i = arrayLength - 1; i >= 0; i--) {
+
+      	      int index = ll >> 6;
+      	      int pos = ll & 0x3f;
+      	      long val = words[index];
+      	      long mask = globalMask << pos;
+      	      long value = (val & mask) >>> pos;
+      	      ll += bitsLength;
+
+      	      int nextIndex = ll >> 6;
+      	      
+      	      if(i < diff){
+      	    	 break;
+      	      }
+      	      
+      	      if (nextIndex != index) {
+      	        pos = ll & 0x3f;
+      	        if (pos != 0) // Number of bits pending for current key is zero, no spill over
+      	        {
+      	          mask = (LONG_MAX >>> (MAX_LENGTH - pos));
+      	          val = words[nextIndex];
+      	          value = value | ((val & mask) << (bitsLength - pos));
+      	        }
+      	      }
+//      	    if((i-diff) == 20005){
+//       	    	vals[i-diff] = (int) value;
+//      	    }
+      	    vals[i-diff] = (int) value;
+      	    }
+          }else{
+		    for (int i = arrayLength - 1; i >= 0; i--) {
+	
+		      int index = ll >> 6;
+		      int pos = ll & 0x3f;
+		      long val = words[index];
+		      long mask = globalMask << pos;
+		      long value = (val & mask) >>> pos;
+		      ll += bitsLength;
+	
+		      int nextIndex = ll >> 6;
+		      
+		      if(i >= limit){
+		    	 continue;
+		      }
+		      
+		      if (nextIndex != index) {
+		        pos = ll & 0x3f;
+		        if (pos != 0) // Number of bits pending for current key is zero, no spill over
+		        {
+		          mask = (LONG_MAX >>> (MAX_LENGTH - pos));
+		          val = words[nextIndex];
+		          value = value | ((val & mask) << (bitsLength - pos));
+		        }
+		      }
+	
+		    vals[i] = (int) value;
+		    }
+          }
+	    
+	    return vals;
+	  }
 
   private int[] getWordsAndByteSize(int arrayLength) {
     int length = arrayLength * bitsLength;

@@ -114,6 +114,9 @@ public class FilterScanner extends AbstractBlockletScanner {
       throws FilterUnsupportedException {
 
     scannedResult.reset();
+    //TODO
+    //scannedResult.setAllSortDimensionBlocksIndexes();
+    
     QueryStatistic totalBlockletStatistic = queryStatisticsModel.getStatisticsTypeAndObjMap()
         .get(QueryStatisticsConstants.TOTAL_BLOCKLET_NUM);
     totalBlockletStatistic.addCountStatistic(
@@ -145,8 +148,11 @@ public class FilterScanner extends AbstractBlockletScanner {
         .addCountStatistic(QueryStatisticsConstants.VALID_SCAN_BLOCKLET_NUM,
             validScannedBlockletStatistic.getCount() + 1);
     queryStatisticsModel.getRecorder().recordStatistics(validScannedBlockletStatistic);
+    
+    //TODO
     // get the row indexes from bot set
     int[] indexes = new int[bitSet.cardinality()];
+    int[] physicalIndexes = new int[bitSet.cardinality()];
     int index = 0;
     for (int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i + 1)) {
       indexes[index++] = i;
@@ -162,7 +168,7 @@ public class FilterScanner extends AbstractBlockletScanner {
       if (null == blocksChunkHolder.getDimensionDataChunk()[allSelectedDimensionBlocksIndexes[i]]) {
         dimensionColumnDataChunk[allSelectedDimensionBlocksIndexes[i]] =
             blocksChunkHolder.getDataBlock()
-                .getDimensionChunk(fileReader, allSelectedDimensionBlocksIndexes[i]);
+                .getDimensionChunk(fileReader, allSelectedDimensionBlocksIndexes[i], blocksChunkHolder.getLimit());
       } else {
         dimensionColumnDataChunk[allSelectedDimensionBlocksIndexes[i]] =
             blocksChunkHolder.getDimensionDataChunk()[allSelectedDimensionBlocksIndexes[i]];
@@ -185,8 +191,14 @@ public class FilterScanner extends AbstractBlockletScanner {
       }
     }
     scannedResult.setDimensionChunks(dimensionColumnDataChunk);
+    //TODO
+    scannedResult.setAllSortDimensionBlocksIndexes();
+    
     scannedResult.setIndexes(indexes);
     scannedResult.setMeasureChunks(measureColumnDataChunk);
     scannedResult.setNumberOfRows(indexes.length);
+    
+    //TODO
+    //scannedResult.setAllSortDimensionBlocksIndexes(blockExecutionInfo.getAllSortDimensionBlocksIndexes());
   }
 }

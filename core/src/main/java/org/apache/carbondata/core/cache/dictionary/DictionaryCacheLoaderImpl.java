@@ -110,6 +110,12 @@ public class DictionaryCacheLoaderImpl implements DictionaryCacheLoader {
         dictionaryChunks.add(oneDictionaryChunk);
       }
     }
+    //TODO
+//  for(byte[] item: oneDictionaryChunk){
+//	  
+//	  System.out.println("dictionary item: " + new String(item));
+//  }
+    
     for (List<byte[]> dictionaryChunk : dictionaryChunks) {
       if (!dictionaryChunk.isEmpty()) {
         dictionaryInfo.addDictionaryChunk(dictionaryChunk);

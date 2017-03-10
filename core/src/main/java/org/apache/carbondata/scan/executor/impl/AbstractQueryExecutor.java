@@ -201,6 +201,7 @@ public abstract class AbstractQueryExecutor<E> implements QueryExecutor<E> {
     // fill all the block execution infos for all the blocks selected in
     // query
     // and query will be executed based on that infos
+    //System.out.println("queryModel.getTableBlockInfos().get(0).getFilePath(): " + queryModel.getTableBlockInfos().get(0).getFilePath());
     for (int i = 0; i < queryProperties.dataBlocks.size(); i++) {
       blockExecutionInfoList.add(
           getBlockExecutionInfoForBlock(queryModel, queryProperties.dataBlocks.get(i),
@@ -317,6 +318,11 @@ public abstract class AbstractQueryExecutor<E> implements QueryExecutor<E> {
     blockExecutionInfo.setAllSelectedDimensionBlocksIndexes(QueryUtil
         .getDimensionsBlockIndexes(updatedQueryDimension,
             segmentProperties.getDimensionOrdinalToBlockMapping(), expressionDimensions));
+    // TODO setting all sorted dimension
+    blockExecutionInfo.setAllSortDimensionBlocksIndexes(QueryUtil
+        .getDimensionsBlockIndexes(queryModel.getSortDimensions(),
+            segmentProperties.getDimensionOrdinalToBlockMapping(), expressionDimensions));
+    
     // setting all the measure chunk indexes to be read from file
     blockExecutionInfo.setAllSelectedMeasureBlocksIndexes(QueryUtil
         .getMeasureBlockIndexes(queryModel.getQueryMeasures(), expressionMeasures,

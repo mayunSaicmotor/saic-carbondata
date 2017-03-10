@@ -83,6 +83,9 @@ public class ColumnReverseDictionaryInfo extends AbstractColumnDictionaryInfo {
    * @param dictionaryChunk
    */
   @Override public void addDictionaryChunk(List<byte[]> dictionaryChunk) {
+	  for(byte[] data : dictionaryChunk){
+		  System.out.println("data: "+new String(data));
+	  }
     dictionaryChunks.add(dictionaryChunk);
     if (null == dictionaryByteArrayToSurrogateKeyMap) {
       createDictionaryByteArrayToSurrogateKeyMap(dictionaryChunk.size());
@@ -100,6 +103,8 @@ public class ColumnReverseDictionaryInfo extends AbstractColumnDictionaryInfo {
       // create a wrapper class that will calculate hash code for byte array
       DictionaryByteArrayWrapper dictionaryByteArrayWrapper =
           new DictionaryByteArrayWrapper(oneDictionaryChunk.get(i), xxHash32);
+      System.out.println("oneDictionaryChunk.get(i): "+ new String(oneDictionaryChunk.get(i)));
+      System.out.println("surrogateKey: "+ (surrogateKey+1));
       dictionaryByteArrayToSurrogateKeyMap.put(dictionaryByteArrayWrapper, ++surrogateKey);
     }
   }

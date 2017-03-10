@@ -51,11 +51,11 @@ public class ExcludeFilterExecuterImpl implements FilterExecuter {
         .get(dimColEvaluatorInfo.getColumnIndex());
     if (null == blockChunkHolder.getDimensionDataChunk()[blockIndex]) {
       blockChunkHolder.getDataBlock()
-          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex);
+          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex, blockChunkHolder.getLimit());
     }
     if (null == blockChunkHolder.getDimensionDataChunk()[blockIndex]) {
       blockChunkHolder.getDimensionDataChunk()[blockIndex] = blockChunkHolder.getDataBlock()
-          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex);
+          .getDimensionChunk(blockChunkHolder.getFileReader(), blockIndex, blockChunkHolder.getLimit());
     }
     return getFilteredIndexes(blockChunkHolder.getDimensionDataChunk()[blockIndex],
         blockChunkHolder.getDataBlock().nodeSize());

@@ -21,8 +21,11 @@ package org.apache.carbondata.core.carbon.datastore.impl.btree;
 import org.apache.carbondata.core.carbon.datastore.BTreeBuilderInfo;
 import org.apache.carbondata.core.carbon.datastore.block.BlockInfo;
 import org.apache.carbondata.core.carbon.datastore.block.TableBlockInfo;
+import org.apache.carbondata.core.carbon.datastore.chunk.DimensionColumnDataChunk;
+import org.apache.carbondata.core.carbon.datastore.chunk.MeasureColumnDataChunk;
 import org.apache.carbondata.core.carbon.metadata.blocklet.DataFileFooter;
 import org.apache.carbondata.core.carbon.metadata.blocklet.index.BlockletMinMaxIndex;
+import org.apache.carbondata.core.datastorage.store.FileHolder;
 
 /**
  * Leaf node for btree where only min max will be store this can be used from
@@ -61,5 +64,18 @@ public class BlockBTreeLeafNode extends AbstractBTreeLeafNode {
   public TableBlockInfo getTableBlockInfo() {
     return blockInfo.getTableBlockInfo();
   }
+
+@Override
+public MeasureColumnDataChunk getMeassureChunk(FileHolder fileReader, int blockIndex, int limit) {
+	// TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unsupported operation");
+}
+
+@Override
+public DimensionColumnDataChunk getDimensionChunk(FileHolder fileReader, int blockIndexes, int limit,
+		int maxLogicalRowId, boolean descSortFlg) {
+	// TODO Auto-generated method stub
+	throw new UnsupportedOperationException("Unsupported operation");
+}
 
 }

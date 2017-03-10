@@ -43,13 +43,15 @@ object CarbonExample {
            LOAD DATA LOCAL INPATH '$testData' into table t3
            """)
 
+
+           
     cc.sql("""
            SELECT country, count(salary) AS amount
            FROM t3
            WHERE country IN ('china','france')
            GROUP BY country
            """).show()
-
-    cc.sql("DROP TABLE IF EXISTS t3")
+  cc.sql("desc t3").show();
+    //cc.sql("DROP TABLE IF EXISTS t3")
   }
 }

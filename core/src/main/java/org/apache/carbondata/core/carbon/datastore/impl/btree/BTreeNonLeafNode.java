@@ -180,6 +180,25 @@ public class BTreeNonLeafNode implements BTreeNode {
   }
 
   /**
+   * Below method will be used to get the dimension chunks
+   *
+   * @param fileReader   file reader to read the chunks from file
+   * @param blockIndexes indexes of the blocks need to be read
+   * @return dimension data chunks
+   */
+  @Override public DimensionColumnDataChunk[] getDimensionChunksForSort(FileHolder fileReader,
+      int[] sortDimensionBlockIndexes, int limit, boolean descSortFlg) {
+
+    // operation of getting the dimension chunks is not supported as its a
+    // non leaf node
+    // and in case of B+Tree data will be stored only in leaf node and
+    // intermediate
+    // node will be used only for searching the leaf node
+    throw new UnsupportedOperationException("Unsupported operation");
+  }
+  
+  
+  /**
    * Below method will be used to get the dimension chunk
    *
    * @param fileReader file reader to read the chunk from file
@@ -187,7 +206,7 @@ public class BTreeNonLeafNode implements BTreeNode {
    * @return dimension data chunk
    */
   @Override public DimensionColumnDataChunk getDimensionChunk(FileHolder fileReader,
-      int blockIndexes) {
+      int blockIndexes, int limit) {
     // operation of getting the dimension chunk is not supported as its a
     // non leaf node
     // and in case of B+Tree data will be stored only in leaf node and
@@ -195,6 +214,23 @@ public class BTreeNonLeafNode implements BTreeNode {
     // node will be used only for searching the leaf node
     throw new UnsupportedOperationException("Unsupported operation");
   }
+  /**
+   * Below method will be used to get the dimension chunk
+   *
+   * @param fileReader file reader to read the chunk from file
+   * @param blockIndex block index to be read
+   * @return dimension data chunk
+   */
+  @Override public DimensionColumnDataChunk getDimensionChunk(FileHolder fileReader,
+      int blockIndexes, int limit, int maxLogicalRowId, boolean descSortFlg) {
+    // operation of getting the dimension chunk is not supported as its a
+    // non leaf node
+    // and in case of B+Tree data will be stored only in leaf node and
+    // intermediate
+    // node will be used only for searching the leaf node
+    throw new UnsupportedOperationException("Unsupported operation");
+  } 
+  
 
   /**
    * Below method will be used to get the measure chunk
@@ -204,7 +240,7 @@ public class BTreeNonLeafNode implements BTreeNode {
    * @return measure column data chunk
    */
   @Override public MeasureColumnDataChunk[] getMeasureChunks(FileHolder fileReader,
-      int[] blockIndexes) {
+      int[] blockIndexes, int limit) {
     // operation of getting the measure chunk is not supported as its a non
     // leaf node
     // and in case of B+Tree data will be stored only in leaf node and
@@ -229,4 +265,16 @@ public class BTreeNonLeafNode implements BTreeNode {
     // node will be used only for searching the leaf node
     throw new UnsupportedOperationException("Unsupported operation");
   }
+
+  
+  @Override public String getFilePath(){
+	  
+	  throw new UnsupportedOperationException("Unsupported operation");
+  }
+
+@Override
+public MeasureColumnDataChunk getMeassureChunk(FileHolder fileReader, int blockIndex, int limit) {
+	// TODO Auto-generated method stub
+	 throw new UnsupportedOperationException("Unsupported operation");
+}
 }

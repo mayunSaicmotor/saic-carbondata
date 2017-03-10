@@ -66,7 +66,7 @@ public class QueryModel implements Serializable {
   /**
    * list of dimension in which sorting is applied
    */
-  private List<QueryDimension> sortDimension;
+  private List<QueryDimension> sortDimensions;
   /**
    * list of measure selected in query
    */
@@ -143,7 +143,7 @@ public class QueryModel implements Serializable {
     tableBlockInfos = new ArrayList<TableBlockInfo>();
     queryDimension = new ArrayList<QueryDimension>();
     queryMeasures = new ArrayList<QueryMeasure>();
-    sortDimension = new ArrayList<QueryDimension>();
+    sortDimensions = new ArrayList<QueryDimension>();
     sortOrder = new byte[0];
     paritionColumns = new ArrayList<String>();
     invalidSegmentIds = new ArrayList<>();
@@ -179,6 +179,7 @@ public class QueryModel implements Serializable {
     queryModel.setCountStarQuery(queryPlan.isCountStarQuery());
     //TODO need to remove this code, and executor will load the table
     // from file metadata
+    queryModel.setLimit(queryPlan.getLimit());
     queryModel.setTable(carbonTable);
   }
 
@@ -191,10 +192,10 @@ public class QueryModel implements Serializable {
         sortOrderByteArray[i++] = (byte) mdim.getSortOrder().ordinal();
       }
       executorModel.setSortOrder(sortOrderByteArray);
-      executorModel.setSortDimension(sortedDims);
+      executorModel.setSortDimensions(sortedDims);
     } else {
       executorModel.setSortOrder(new byte[0]);
-      executorModel.setSortDimension(new ArrayList<QueryDimension>(0));
+      executorModel.setSortDimensions(new ArrayList<QueryDimension>(0));
     }
 
   }
@@ -411,15 +412,15 @@ public class QueryModel implements Serializable {
   /**
    * @return the sortDimension
    */
-  public List<QueryDimension> getSortDimension() {
-    return sortDimension;
+  public List<QueryDimension> getSortDimensions() {
+    return sortDimensions;
   }
 
   /**
    * @param sortDimension the sortDimension to set
    */
-  public void setSortDimension(List<QueryDimension> sortDimension) {
-    this.sortDimension = sortDimension;
+  public void setSortDimensions(List<QueryDimension> sortDimensions) {
+    this.sortDimensions = sortDimensions;
   }
 
   /**

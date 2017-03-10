@@ -39,6 +39,7 @@ public class VariableLengthDimensionDataChunk implements DimensionColumnDataChun
    * data chunk
    */
   private List<byte[]> dataChunk;
+  //int totalRowNumber = 0;
 
   /**
    * Constructor for this class
@@ -48,6 +49,10 @@ public class VariableLengthDimensionDataChunk implements DimensionColumnDataChun
    */
   public VariableLengthDimensionDataChunk(List<byte[]> dataChunk,
       DimensionChunkAttributes chunkAttributes) {
+//	  for(byte[] data : dataChunk){
+//		  System.out.println(new String(data));
+//	  }
+	  
     this.chunkAttributes = chunkAttributes;
     this.dataChunk = dataChunk;
   }
@@ -90,8 +95,16 @@ public class VariableLengthDimensionDataChunk implements DimensionColumnDataChun
     if (null != chunkAttributes.getInvertedIndexes()) {
       index = chunkAttributes.getInvertedIndexesReverse()[index];
     }
+	  
     return dataChunk.get(index);
   }
+  
+  @Override public byte[] getChunkDataByPhysicalRowId(int physicalRowId) {
+		  
+	    return dataChunk.get(physicalRowId);
+  }
+  
+  
 
   /**
    * Below method will be used get the chunk attributes
@@ -111,4 +124,32 @@ public class VariableLengthDimensionDataChunk implements DimensionColumnDataChun
   @Override public List<byte[]> getCompleteDataChunk() {
     return dataChunk;
   }
+  
+  /**
+   * TODO Below method will be used to return the total row number
+   *
+   * @return total row number
+   */
+  @Override public int getTotalRowNumber() {
+	  if(dataChunk != null){
+		  
+		  if(chunkAttributes.getColumnValueSize()>0){
+			  return dataChunk.size()/chunkAttributes.getColumnValueSize();
+		  }else{
+			  return dataChunk.size();
+		  }  
+	  }
+  return 0; //dataChunk.get(0).length/chunkAttributes.getColumnValueSize();
+  }
+  
+	// TODO
+	@Override
+	public void setCompleteRleDataChunk(int[] rleDataChunk) {
+		// this.rleDataChunk = rleDataChunk;
+	}
+
+	@Override
+	public int[] getCompleteRleDataChunk() {
+		return null;
+	}
 }

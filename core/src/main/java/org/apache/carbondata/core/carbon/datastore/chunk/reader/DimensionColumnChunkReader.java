@@ -36,7 +36,17 @@ public interface DimensionColumnChunkReader {
    * @return dimension column chunks
    */
   DimensionColumnDataChunk[] readDimensionChunks(FileHolder fileReader, int... blockIndexes);
-
+  
+  //TODO
+  /**
+   * Below method will be used to read the chunk based on block indexes
+   *
+   * @param fileReader   file reader to read the blocks from file
+   * @param blockIndexes blocks to be read
+   * @return dimension column chunks
+   */
+  DimensionColumnDataChunk[] readDimensionChunksForSort(int[] sortDimentionBlockIndexes, FileHolder fileReader,int pageSize, int limit, boolean descSortFlg);
+  
   /**
    * Below method will be used to read the chunk based on block index
    *
@@ -45,4 +55,16 @@ public interface DimensionColumnChunkReader {
    * @return dimension column chunk
    */
   DimensionColumnDataChunk readDimensionChunk(FileHolder fileReader, int blockIndex);
+  
+  /**
+   * Below method will be used to read the chunk based on block index
+   *
+   * @param fileReader file reader to read the blocks from file
+   * @param blockIndex block to be read
+   * @return dimension column chunk
+   */
+  DimensionColumnDataChunk readDimensionChunkForSort(FileHolder fileReader, int sortDimensionIndex, int pageSize, int limit, boolean descSortFlg);
+  
+  DimensionColumnDataChunk readDimensionChunkForFilter(FileHolder fileReader, int sortDimensionIndex, int limit, int maxLogicalRowId, boolean descSortFlg);
+
 }

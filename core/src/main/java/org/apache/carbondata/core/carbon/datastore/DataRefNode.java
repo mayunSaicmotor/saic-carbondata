@@ -75,6 +75,9 @@ public interface DataRefNode {
    * @return dimension data chunks
    */
   DimensionColumnDataChunk[] getDimensionChunks(FileHolder fileReader, int[] blockIndexes);
+  
+  DimensionColumnDataChunk[] getDimensionChunksForSort(FileHolder fileReader, int[] sortDimensionBlockIndexes, int limit, boolean descSortFlg);
+  
 
   /**
    * Below method will be used to get the dimension chunk
@@ -83,7 +86,9 @@ public interface DataRefNode {
    * @param blockIndex block index to be read
    * @return dimension data chunk
    */
-  DimensionColumnDataChunk getDimensionChunk(FileHolder fileReader, int blockIndexes);
+  DimensionColumnDataChunk getDimensionChunk(FileHolder fileReader, int blockIndexes, int limit);
+  
+  DimensionColumnDataChunk getDimensionChunk(FileHolder fileReader, int blockIndexes, int limit, int maxLogicalRowId, boolean descSortFlg);
 
   /**
    * Below method will be used to get the measure chunk
@@ -92,7 +97,7 @@ public interface DataRefNode {
    * @param blockIndexes block indexes to be read from file
    * @return measure column data chunk
    */
-  MeasureColumnDataChunk[] getMeasureChunks(FileHolder fileReader, int[] blockIndexes);
+  MeasureColumnDataChunk[] getMeasureChunks(FileHolder fileReader, int[] blockIndexes, int limit);
 
   /**
    * Below method will be used to read the measure chunk
@@ -102,4 +107,8 @@ public interface DataRefNode {
    * @return measure data chunk
    */
   MeasureColumnDataChunk getMeasureChunk(FileHolder fileReader, int blockIndex);
+  
+  String getFilePath();
+
+MeasureColumnDataChunk getMeassureChunk(FileHolder fileReader, int blockIndex, int limit);
 }

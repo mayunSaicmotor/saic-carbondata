@@ -23,9 +23,11 @@ import java.io.IOException;
 
 import org.apache.carbondata.common.logging.LogService;
 import org.apache.carbondata.common.logging.LogServiceFactory;
-
+import org.apache.carbondata.core.constants.CarbonCommonConstants;
 import org.xerial.snappy.Snappy;
+import org.xerial.snappy.SnappyNew;
 
+//TODO
 public class SnappyCompression {
   /**
    * Attribute for Carbon LOGGER
@@ -67,6 +69,25 @@ public class SnappyCompression {
       }
       return compInput;
     }
+    
+    /**
+     * wrapper method for unCompress byte[] compInput.
+     *
+     * @return byte[].
+     */
+    public byte[] unCompress(byte[] compInput, int limit, boolean descSortFlg) {
+        try {
+        	
+        	if(descSortFlg || CarbonCommonConstants.SNAPPY_UNCOMRESS_NO_LIMIT_FLG){
+        		return Snappy.uncompress(compInput);
+        	}
+        	
+            return SnappyNew.uncompress(compInput, limit);
+          } catch (IOException e) {
+            LOGGER.error(e, e.getMessage());
+          }
+          return compInput;
+    }
   }
 
   /**
@@ -104,7 +125,15 @@ public class SnappyCompression {
       }
       return null;
     }
-
+    
+    public double[] unCompress(byte[] compInput, int limit, boolean descSortFlg) {
+    /*    try {
+          return Snappy.uncompressfloatArray(compInput, limit);
+        } catch (IOException e) {
+          LOGGER.error(e, e.getMessage());
+        }*/
+    	 throw new UnsupportedOperationException("Unsupported operation");
+      }
   }
 
   /**
@@ -147,6 +176,15 @@ public class SnappyCompression {
       }
       return null;
     }
+    
+    public short[] unCompress(byte[] compInput, int limit, boolean descSortFlg) {
+    /*    try {
+          return Snappy.uncompressfloatArray(compInput, limit);
+        } catch (IOException e) {
+          LOGGER.error(e, e.getMessage());
+        }*/
+    	 throw new UnsupportedOperationException("Unsupported operation");
+      }
   }
 
   /**
@@ -187,6 +225,15 @@ public class SnappyCompression {
       }
       return null;
     }
+    
+    public int[] unCompress(byte[] compInput, int limit, boolean descSortFlg) {
+    /*    try {
+          return Snappy.uncompressfloatArray(compInput, limit);
+        } catch (IOException e) {
+          LOGGER.error(e, e.getMessage());
+        }*/
+    	 throw new UnsupportedOperationException("Unsupported operation");
+      }
   }
 
   /**
@@ -227,6 +274,18 @@ public class SnappyCompression {
       }
       return null;
     }
+    
+    public long[] unCompress(byte[] compInput, int limit, boolean descSortFlg) {
+        try {
+        	if(CarbonCommonConstants.SNAPPY_UNCOMRESS_NO_LIMIT_FLG){
+        		return SnappyNew.uncompressLongArray(compInput);
+        	}
+          return SnappyNew.uncompressLongArray(compInput, limit);
+        } catch (IOException e) {
+          LOGGER.error(e, e.getMessage());
+        }
+        return null;
+      }
   }
 
   /**
@@ -268,6 +327,15 @@ public class SnappyCompression {
       }
       return null;
     }
+    
+    public float[] unCompress(byte[] compInput, int limit, boolean descSortFlg) {
+    /*    try {
+          return Snappy.uncompressfloatArray(compInput, limit);
+        } catch (IOException e) {
+          LOGGER.error(e, e.getMessage());
+        }*/
+    	 throw new UnsupportedOperationException("Unsupported operation");
+      }
   }
 
 }

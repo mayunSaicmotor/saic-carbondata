@@ -104,4 +104,9 @@ public class UnCompressMaxMinFloat implements UnCompressValue<float[]> {
     return dataHolderVal;
   }
 
+  @Override
+  public UnCompressValue uncompress(DataType dataType, int limit, boolean descSortFlg) {
+  	// TODO Auto-generated method stub
+  	return null;
+  }
 }

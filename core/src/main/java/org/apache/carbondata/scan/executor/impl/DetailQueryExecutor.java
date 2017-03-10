@@ -25,6 +25,7 @@ import org.apache.carbondata.scan.executor.exception.QueryExecutionException;
 import org.apache.carbondata.scan.executor.infos.BlockExecutionInfo;
 import org.apache.carbondata.scan.model.QueryModel;
 import org.apache.carbondata.scan.result.iterator.DetailQueryResultIterator;
+import org.apache.carbondata.scan.result.iterator.DetailQueryResultIteratorForSort;
 
 /**
  * Below class will be used to execute the detail query
@@ -36,8 +37,13 @@ public class DetailQueryExecutor extends AbstractQueryExecutor {
   @Override public CarbonIterator<Object[]> execute(QueryModel queryModel)
       throws QueryExecutionException {
     List<BlockExecutionInfo> blockExecutionInfoList = getBlockExecutionInfos(queryModel);
+    //TODO for sort, if blockExecutionInfoList.size >1, it can't make sure the data's order in 2 block
+    if(queryModel.getSortDimensions() != null && queryModel.getSortDimensions().size()>0 && blockExecutionInfoList.size() == 1){
+        return new DetailQueryResultIteratorForSort(blockExecutionInfoList, queryModel,
+                queryProperties.executorService);
+    }
     return new DetailQueryResultIterator(blockExecutionInfoList, queryModel,
-        queryProperties.executorService);
+            queryProperties.executorService);
   }
 
 }

@@ -96,5 +96,9 @@ public class UnCompressNonDecimalLong implements UnCompressValue<long[]> {
     dataHolder.setReadableDoubleValues(vals);
     return dataHolder;
   }
-
+  @Override
+  public UnCompressValue uncompress(DataType dataType, int limit, boolean descSortFlg) {
+  	// TODO Auto-generated method stub
+  	return null;
+  }
 }

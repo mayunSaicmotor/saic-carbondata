@@ -30,9 +30,11 @@ import org.apache.carbondata.core.constants.CarbonCommonConstants;
 import org.apache.carbondata.core.datastorage.store.compression.Compressor;
 import org.apache.carbondata.core.datastorage.store.compression.SnappyCompression;
 import org.apache.carbondata.core.datastorage.store.compression.ValueCompressonHolder;
+import org.apache.carbondata.core.datastorage.store.compression.ValueCompressonHolder.UnCompressValue;
 import org.apache.carbondata.core.datastorage.store.dataholder.CarbonReadDataHolder;
 import org.apache.carbondata.core.util.DataTypeUtil;
 import org.apache.carbondata.core.util.ValueCompressionUtil;
+import org.apache.carbondata.core.util.ValueCompressionUtil.DataType;
 
 public class UnCompressByteArray implements ValueCompressonHolder.UnCompressValue<byte[]> {
   /**
@@ -133,5 +135,11 @@ public class UnCompressByteArray implements ValueCompressonHolder.UnCompressValu
     BYTE_ARRAY,
     BIG_DECIMAL
   }
+
+@Override
+public UnCompressValue uncompress(DataType dataType, int limit, boolean descSortFlg) {
+	// TODO Auto-generated method stub
+	return null;
+}
 
 }

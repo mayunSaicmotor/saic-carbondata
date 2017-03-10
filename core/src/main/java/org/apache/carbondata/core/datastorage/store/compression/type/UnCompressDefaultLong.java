@@ -38,11 +38,12 @@ public class UnCompressDefaultLong extends UnCompressNoneLong {
     return null;
   }
 
+  // why System.arraycopy again?
   @Override public CarbonReadDataHolder getValues(int decimal, Object maxValueObject) {
     CarbonReadDataHolder dataHolder = new CarbonReadDataHolder();
-    long[] vals = new long[value.length];
-    System.arraycopy(value, 0, vals, 0, vals.length);
-    dataHolder.setReadableLongValues(vals);
+    //long[] vals = new long[value.length];
+    //System.arraycopy(value, 0, vals, 0, vals.length);
+    dataHolder.setReadableLongValues(value);
     return dataHolder;
   }
 

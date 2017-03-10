@@ -43,6 +43,8 @@ public abstract class AbstractBTreeLeafNode implements BTreeNode {
    * Next node of the leaf
    */
   protected BTreeNode nextNode;
+  
+  protected String filePath;
 
   /**
    * max key of the column this will be used to check whether this leaf will
@@ -178,6 +180,21 @@ public abstract class AbstractBTreeLeafNode implements BTreeNode {
     return null;
   }
 
+  
+  //TODO
+  /**
+   * Below method will be used to get the dimension chunks
+   *
+   * @param fileReader   file reader to read the chunks from file
+   * @param blockIndexes indexes of the blocks need to be read
+   * @return dimension data chunks
+   */
+  @Override public DimensionColumnDataChunk[] getDimensionChunksForSort(FileHolder fileReader, int[] sortDimensionBlockIndexes, int limit, boolean descSortFlg) {
+    // No required here as leaf which will will be use this class will implement its own get
+    // dimension chunks
+    return null;
+  }
+  
   /**
    * Below method will be used to get the dimension chunk
    *
@@ -186,7 +203,7 @@ public abstract class AbstractBTreeLeafNode implements BTreeNode {
    * @return dimension data chunk
    */
   @Override public DimensionColumnDataChunk getDimensionChunk(FileHolder fileReader,
-      int blockIndex) {
+      int blockIndex, int limit) {
     // No required here as leaf which will will be use this class will implement
     // its own get dimension chunks
     return null;
@@ -200,7 +217,7 @@ public abstract class AbstractBTreeLeafNode implements BTreeNode {
    * @return measure column data chunk
    */
   @Override public MeasureColumnDataChunk[] getMeasureChunks(FileHolder fileReader,
-      int[] blockIndexes) {
+      int[] blockIndexes, int limit) {
     // No required here as leaf which will will be use this class will implement its own get
     // measure chunks
     return null;
@@ -217,5 +234,12 @@ public abstract class AbstractBTreeLeafNode implements BTreeNode {
     // No required here as leaf which will will be use this class will implement its own get
     // measure chunks
     return null;
+  }
+  
+
+  @Override
+  public String getFilePath() {
+
+    return filePath;
   }
 }

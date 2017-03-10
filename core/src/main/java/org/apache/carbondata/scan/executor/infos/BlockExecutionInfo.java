@@ -118,7 +118,21 @@ public class BlockExecutionInfo {
    */
   private int[] allSelectedDimensionBlocksIndexes;
 
+  //TODO
   /**
+   * sorted dimension indexes
+   */
+	private int[] allSortDimensionBlocksIndexes;
+
+	public int[] getAllSortDimensionBlocksIndexes() {
+		return allSortDimensionBlocksIndexes;
+	}
+
+	public void setAllSortDimensionBlocksIndexes(int[] allSortDimensionBlocksIndexes) {
+		this.allSortDimensionBlocksIndexes = allSortDimensionBlocksIndexes;
+	}
+
+/**
    * will be used to read the measure block from file
    */
   private int[] allSelectedMeasureBlocksIndexes;

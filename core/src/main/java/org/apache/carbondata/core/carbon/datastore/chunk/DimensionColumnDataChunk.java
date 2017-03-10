@@ -53,6 +53,8 @@ public interface DimensionColumnDataChunk<T> {
    * @return chunk
    */
   byte[] getChunkData(int columnIndex);
+  
+  byte[] getChunkDataByPhysicalRowId(int physicalRowId);
 
   /**
    * Below method will be used get the chunk attributes
@@ -68,4 +70,10 @@ public interface DimensionColumnDataChunk<T> {
    * @return complete chunk
    */
   T getCompleteDataChunk();
+  
+  int[] getCompleteRleDataChunk();
+  void setCompleteRleDataChunk(int[] rleDataChunk);
+  
+
+  int getTotalRowNumber();
 }

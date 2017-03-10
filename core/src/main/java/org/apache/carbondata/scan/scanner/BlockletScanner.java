@@ -19,6 +19,7 @@
 package org.apache.carbondata.scan.scanner;
 
 import org.apache.carbondata.scan.executor.exception.QueryExecutionException;
+import org.apache.carbondata.scan.model.SortOrderType;
 import org.apache.carbondata.scan.processor.BlocksChunkHolder;
 import org.apache.carbondata.scan.result.AbstractScannedResult;
 
@@ -36,6 +37,11 @@ public interface BlockletScanner {
    * result after processing
    * @throws QueryExecutionException
    */
+  AbstractScannedResult getScannedResultAfterProcessFilter();
+  
   AbstractScannedResult scanBlocklet(BlocksChunkHolder blocksChunkHolder)
-      throws QueryExecutionException;
+	      throws QueryExecutionException;
+  
+  AbstractScannedResult scanBlockletForSort(BlocksChunkHolder blocksChunkHolder, SortOrderType orderType)
+	      throws QueryExecutionException;
 }

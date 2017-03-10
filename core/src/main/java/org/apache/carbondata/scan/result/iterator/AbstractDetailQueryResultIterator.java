@@ -18,6 +18,7 @@
  */
 package org.apache.carbondata.scan.result.iterator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -38,6 +39,7 @@ import org.apache.carbondata.core.util.CarbonProperties;
 import org.apache.carbondata.scan.executor.infos.BlockExecutionInfo;
 import org.apache.carbondata.scan.model.QueryModel;
 import org.apache.carbondata.scan.processor.AbstractDataBlockIterator;
+import org.apache.carbondata.scan.processor.DataBlockForSort;
 import org.apache.carbondata.scan.processor.impl.DataBlockIteratorImpl;
 
 /**
@@ -63,7 +65,13 @@ public abstract class AbstractDetailQueryResultIterator extends CarbonIterator {
    */
   protected FileHolder fileReader;
   protected AbstractDataBlockIterator dataBlockIterator;
-  protected boolean nextBatch = false;
+  //TODO for sort
+  //protected List<DataBlockForSort> dataBlocksList = new ArrayList<DataBlockForSort>();
+  
+
+
+
+protected boolean nextBatch = false;
   /**
    * total time scan the blocks
    */
@@ -79,12 +87,31 @@ public abstract class AbstractDetailQueryResultIterator extends CarbonIterator {
   /**
    * number of cores which can be used
    */
-  private int batchSize;
+  protected int batchSize;
+  
+  /**
+   * number of row need to return
+   */
+  protected int limit;
+  
+  
+  protected boolean limitFlg = false;
+  
   /**
    * queryStatisticsModel to store query statistics object
    */
   QueryStatisticsModel queryStatisticsModel;
 
+  public synchronized void decreaseLimit(int count){
+	  if(limitFlg){
+		//LOGGER.info("limit before: " + limit);
+		//LOGGER.info("count: " + count);
+		  limit = limit - count;
+		//LOGGER.info("limit after: " + limit);
+	  }
+		
+
+  }
   public AbstractDetailQueryResultIterator(List<BlockExecutionInfo> infos, QueryModel queryModel,
       ExecutorService execService) {
     String batchSizeString =
@@ -99,6 +126,18 @@ public abstract class AbstractDetailQueryResultIterator extends CarbonIterator {
     } else {
       batchSize = CarbonCommonConstants.DETAIL_QUERY_BATCH_SIZE_DEFAULT;
     }
+    
+    limit = queryModel.getLimit();
+    // process limit push down
+    if(limit > 0 ){
+    	limitFlg =true;
+    	
+        if(batchSize > limit){
+
+        	batchSize =  limit;
+        }
+    }
+
     this.recorder = queryModel.getStatisticsRecorder();
     this.blockExecutionInfos = infos;
     this.fileReader = FileFactory.getFileHolder(
@@ -114,7 +153,7 @@ public abstract class AbstractDetailQueryResultIterator extends CarbonIterator {
       DataRefNodeFinder finder = new BTreeDataRefNodeFinder(blockInfo.getEachColumnValueSize());
       DataRefNode startDataBlock = finder
           .findFirstDataBlock(blockInfo.getDataBlock().getDataRefNode(), blockInfo.getStartKey());
-      while (startDataBlock.nodeNumber() < blockInfo.getStartBlockletIndex()) {
+      while (startDataBlock.nodeNumber() != blockInfo.getStartBlockletIndex()) {
         startDataBlock = startDataBlock.getNextDataRefNode();
       }
 
@@ -165,6 +204,35 @@ public abstract class AbstractDetailQueryResultIterator extends CarbonIterator {
     }
     return null;
   }
+  
+
+  
+ /* public BlocksChunkHolder abstractDataBlockIterator1(BlockExecutionInfo blockExecutionInfo,
+	      FileHolder fileReader, int batchSize, QueryStatisticsModel queryStatisticsModel) {
+	   // this.blockExecutionInfo = blockExecutionInfo;
+	    CarbonIterator<DataRefNode> dataBlockIterator = new BlockletIterator(blockExecutionInfo.getFirstDataBlock(),
+	        blockExecutionInfo.getNumberOfBlockToScan());
+	    BlocksChunkHolder  blocksChunkHolder = new BlocksChunkHolder(blockExecutionInfo.getTotalNumberDimensionBlock(),
+	        blockExecutionInfo.getTotalNumberOfMeasureBlock());
+	    blocksChunkHolder.setFileReader(fileReader);
+
+	    if (blockExecutionInfo.getFilterExecuterTree() != null) {
+	      blockletScanner = new FilterScanner(blockExecutionInfo, queryStatisticsModel);
+	    } else {
+	      blockletScanner = new NonFilterScanner(blockExecutionInfo);
+	    }
+	    if (blockExecutionInfo.isRawRecordDetailQuery()) {
+	      this.scannerResultAggregator =
+	          new RawBasedResultCollector(blockExecutionInfo);
+	    } else {
+	      this.scannerResultAggregator =
+	          new DictionaryBasedResultCollector(blockExecutionInfo);
+	    }
+	    this.batchSize = batchSize;
+	    this.queryStatisticsModel = queryStatisticsModel;
+	  }
+  
+  */
 
   protected void initQueryStatiticsModel() {
     this.queryStatisticsModel = new QueryStatisticsModel();

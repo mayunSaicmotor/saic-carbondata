@@ -110,6 +110,23 @@ public abstract class AbstractChunkReader implements DimensionColumnChunkReader 
     }
     return columnIndexTemp;
   }
+  
+  //for limit query, invertedIndex maybe only get the start part array
+  protected int[] getInvertedReverseIndex(int[] invertedIndex, int pageSize) {
+	  	if(CarbonCommonConstants.SNAPPY_UNCOMRESS_NO_LIMIT_FLG){
+			return getInvertedReverseIndex(invertedIndex);
+		}
+
+	    int[] columnIndexTemp = new int[pageSize];
+	    //pageSize = pageSize - 1;
+	    for (int i = 0; i < invertedIndex.length; i++) {
+	    	if(invertedIndex[i]<pageSize){
+	    		
+	    		columnIndexTemp[invertedIndex[i]] = i;
+	    	}
+	    }
+	    return columnIndexTemp;
+	  }
 
   /**
    * In case of no dictionary column size of the each column value
@@ -140,4 +157,22 @@ public abstract class AbstractChunkReader implements DimensionColumnChunkReader 
     }
     return dataChunk;
   }
+  
+  protected List<byte[]> getNoDictionaryDataChunk(byte[] dataChunkWithLength, int limit) {
+	  //limit = limit > 0 && limit< numberOfElement? limit:numberOfElement;
+	    List<byte[]> dataChunk = new ArrayList<byte[]>(limit);
+	    // wrapping the chunk to byte buffer
+	    ByteBuffer buffer = ByteBuffer.wrap(dataChunkWithLength);
+	    buffer.rewind();
+	    byte[] data = null;
+	    // iterating till all the elements are read
+	    for(int i=0; i< limit && buffer.hasRemaining(); i++){
+	    	
+	        data = new byte[buffer.getShort()];
+		      buffer.get(data);
+		      dataChunk.add(data);
+	    }
+
+	    return dataChunk;
+	  }
 }

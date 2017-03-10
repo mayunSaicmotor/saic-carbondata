@@ -94,5 +94,9 @@ public class UnCompressNonDecimalInt implements UnCompressValue<int[]> {
   @Override public UnCompressValue uncompress(DataType dataType) {
     return null;
   }
-
+  @Override
+  public UnCompressValue uncompress(DataType dataType, int limit, boolean descSortFlg) {
+  	// TODO Auto-generated method stub
+  	return null;
+  }
 }

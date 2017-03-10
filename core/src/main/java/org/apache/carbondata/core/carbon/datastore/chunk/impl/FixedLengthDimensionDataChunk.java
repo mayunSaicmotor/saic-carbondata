@@ -39,6 +39,12 @@ public class FixedLengthDimensionDataChunk implements DimensionColumnDataChunk<b
   private byte[] dataChunk;
 
   /**
+   * data chunks
+   */
+  private int[] rleDataChunk;
+ 
+
+/**
    * Constructor for this class
    *
    * @param dataChunk       data chunk
@@ -73,9 +79,11 @@ public class FixedLengthDimensionDataChunk implements DimensionColumnDataChunk<b
    */
   @Override public int fillConvertedChunkData(int rowId, int columnIndex, int[] row,
       KeyStructureInfo restructuringInfo) {
-    if (chunkAttributes.getInvertedIndexes() != null) {
-      rowId = chunkAttributes.getInvertedIndexesReverse()[rowId];
-    }
+/*    if (chunkAttributes.getInvertedIndexes() != null) {
+    	//TODO
+      //rowId = chunkAttributes.getInvertedIndexesReverse()[rowId];
+      rowId = chunkAttributes.getInvertedIndexesReverse()[chunkAttributes.getInvertedIndexes()[rowId]];
+    }*/
     int start = rowId * chunkAttributes.getColumnValueSize();
     int dict = 0;
     for (int i = start; i < start + chunkAttributes.getColumnValueSize(); i++) {
@@ -101,6 +109,15 @@ public class FixedLengthDimensionDataChunk implements DimensionColumnDataChunk<b
         chunkAttributes.getColumnValueSize());
     return data;
   }
+  
+  
+	@Override public byte[] getChunkDataByPhysicalRowId(int physicalRowId) {
+		byte[] data = new byte[chunkAttributes.getColumnValueSize()];
+		System.arraycopy(dataChunk, physicalRowId * chunkAttributes.getColumnValueSize(), data, 0,
+				chunkAttributes.getColumnValueSize());
+
+		return data;
+	}
 
   /**
    * Below method will be used get the chunk attributes
@@ -120,4 +137,22 @@ public class FixedLengthDimensionDataChunk implements DimensionColumnDataChunk<b
   @Override public byte[] getCompleteDataChunk() {
     return dataChunk;
   }
+  
+
+  @Override public void setCompleteRleDataChunk(int[] rleDataChunk) {
+    this.rleDataChunk = rleDataChunk;
+  }
+  @Override public int[] getCompleteRleDataChunk() {
+	    return rleDataChunk;
+	  }
+  
+  /**
+   * TODO Below method will be used to return the total row number
+   *
+   * @return total row number
+   */
+  @Override public int getTotalRowNumber() {
+    return dataChunk.length/chunkAttributes.getColumnValueSize();
+  }
+  
 }
