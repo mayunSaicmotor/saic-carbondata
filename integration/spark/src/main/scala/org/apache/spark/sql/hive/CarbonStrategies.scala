@@ -46,9 +46,15 @@ import org.apache.spark.sql.hive.execution.HiveNativeCommand
 import org.apache.spark.sql.hive.execution.command._
 import org.apache.spark.sql.optimizer.CarbonAliasDecoderRelation
 import org.apache.spark.sql.optimizer.CarbonDecoderRelation
-import org.apache.spark.sql.optimizer.NewSort
 import org.apache.spark.sql.types.IntegerType
 import org.apache.spark.sql.execution.TungstenSort
+import org.apache.spark.sql.hive.execution.command.DropDatabaseCommand
+import org.apache.spark.sql.hive.execution.command.CreateDatabaseCommand
+import org.apache.spark.sql.optimizer.CarbonMergeSort
+import org.apache.spark.sql.hive.execution.command.DropDatabaseCascadeCommand
+import org.apache.spark.sql.hive.execution.command.DropDatabaseCommand
+import org.apache.spark.sql.hive.execution.command.CreateDatabaseCommand
+import org.apache.spark.sql.hive.execution.command.DropDatabaseCascadeCommand
 
 
 class CarbonStrategies(sqlContext: SQLContext) extends QueryPlanner[SparkPlan] {
@@ -117,7 +123,7 @@ class CarbonStrategies(sqlContext: SQLContext) extends QueryPlanner[SparkPlan] {
                 aliasMap,
                 planLater(child))(sqlContext) :: Nil
           
-            case NewSort(sortExprs, global, child) =>
+            case CarbonMergeSort(sortExprs, global, child) =>
 
 //              TakeOrderedAndProject(
 //                10000,

@@ -157,7 +157,7 @@ public class QueryModel implements Serializable {
 
     fillQueryModel(queryPlan, carbonTable, queryModel, factTableName);
 
-    queryModel.setLimit(queryPlan.getLimit());
+    //queryModel.setLimit(queryPlan.getLimit());
     queryModel.setDetailQuery(queryPlan.isDetailQuery());
     queryModel.setForcedDetailRawQuery(queryPlan.isRawDetailQuery());
     queryModel.setQueryId(queryPlan.getQueryId());

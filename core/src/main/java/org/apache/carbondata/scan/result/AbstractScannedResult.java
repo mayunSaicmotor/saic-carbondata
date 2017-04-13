@@ -225,7 +225,7 @@ public void setCurrentSortDimentionKey(String currentSortDimentionKey) {
 
 
 protected int sortSingleDimensionBlocksIndex = -1;
-protected DimensionColumnDataChunk sortDimention = null;
+protected DimensionColumnDataChunk sortDimentionDataChunk = null;
   protected boolean pauseProcessForSortFlg = false;
   protected int[] pausedCompleteKey = null;
   
@@ -315,7 +315,7 @@ public void setAllSortDimensionBlocksIndexes() {
 	//only consider one sort dimension currently
 	if (allSortDimensionBlocksIndexes != null && allSortDimensionBlocksIndexes.length > 0) {
 		sortSingleDimensionBlocksIndex = allSortDimensionBlocksIndexes[0];
-		sortDimention = dataChunks[sortSingleDimensionBlocksIndex];
+		sortDimentionDataChunk = dataChunks[sortSingleDimensionBlocksIndex];
 		baseSortDimentionInvertedIndexes = dataChunks[sortSingleDimensionBlocksIndex].getAttributes().getInvertedIndexes();
 		
 		for(int i =0 ; i< this.dictionaryColumnBlockIndexes.length; i++){
@@ -385,18 +385,18 @@ public void nextCurrentKeyForSortDimention() {
 	}*/
 	//sortDimention.fillConvertedChunkData(rowCounter, 0, keyArr, columnGroupKeyStructureInfo.get(sortSingleDimensionBlocksIndex));
 	if(this.sortByDictionaryDimensionFlg){
-		sortDimention.fillConvertedChunkData(getStartRowIndex(), 0, keyArr, columnGroupKeyStructureInfo.get(sortSingleDimensionBlocksIndex));
+		sortDimentionDataChunk.fillConvertedChunkData(getStartRowIndex(), 0, keyArr, columnGroupKeyStructureInfo.get(sortSingleDimensionBlocksIndex));
 		this.currentSortDimentionKey = Integer.toString(keyArr[0]);
 	}else if(this.sortByNoDictionaryDimensionFlg){
 		
 		//sortDimention.fillConvertedChunkData(getStartRowIndex(), 0, keyArr, columnGroupKeyStructureInfo.get(sortSingleDimensionBlocksIndex));	
-		this.currentSortDimentionKey = new String(sortDimention.getChunkDataByPhysicalRowId(getStartRowIndex()));
+		this.currentSortDimentionKey = new String(sortDimentionDataChunk.getChunkDataByPhysicalRowId(getStartRowIndex()));
 		
 		
 	}else{
 			
 			//TODO
-			this.currentSortDimentionKey = new String(sortDimention.getChunkData(getStartRowIndex()));
+			this.currentSortDimentionKey = new String(sortDimentionDataChunk.getChunkData(getStartRowIndex()));
 			
 			
 		}
@@ -420,7 +420,7 @@ private int getStartRowIndex() {
 	}*/
 	//return descSortFlg?sortDimention.getTotalRowNumber()-1:rowCounter;
 	
-	return descSortFlg?sortDimention.getTotalRowNumber()-1:rowCounter;
+	return descSortFlg?sortDimentionDataChunk.getTotalRowNumber()-1:rowCounter;
 	//return rowCounter;
 }
 
@@ -975,15 +975,8 @@ public void pauseProcessCollectData(String[] noDictonaryKeys) {
    * @param indexes
    */
   public void setIndexes(int[] indexes) {
-//		if(indexes.length == 4057){
-//			System.out.println("rowMapping length: "+ indexes.length);
-//		}
-		
-	  
     this.rowMapping = indexes;
   }
-  
-  
 
   /**
    * Below method will be used to check whether measure value is null or not

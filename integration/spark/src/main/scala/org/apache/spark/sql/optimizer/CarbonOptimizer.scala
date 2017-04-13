@@ -42,7 +42,7 @@ import scala.util.control.Breaks._
  * Carbon Optimizer to add dictionary decoder.
  */
   
-case class NewSort(
+case class CarbonMergeSort(
     order: Seq[SortOrder],
     global: Boolean,
     child: LogicalPlan) extends UnaryNode {
@@ -197,11 +197,11 @@ class ResolveCarbonFunctions(relations: Seq[CarbonDecoderRelation])
             CarbonDictionaryTempDecoder(new util.HashSet[AttributeReferenceWrapper](),
               new util.HashSet[AttributeReferenceWrapper](),
               //Sort(sort.order, sort.global, child),
-              NewSort(sort.order, sort.global, child),
+              CarbonMergeSort(sort.order, sort.global, child),
               isOuter = true)
           } else {
             //Sort(sort.order, sort.global, child)
-            NewSort(sort.order, sort.global, child)
+            CarbonMergeSort(sort.order, sort.global, child)
           }
         
         
@@ -694,14 +694,14 @@ class ResolveCarbonFunctions(relations: Seq[CarbonDecoderRelation])
       case cd: CarbonDictionaryCatalystDecoder =>
         cd
         //TODO
-      case sort: NewSort =>
+      case sort: CarbonMergeSort =>
         val sortExprs = sort.order.map { s =>
           s.transform {
             case attr: AttributeReference =>
               updateDataType(attr, attrMap, allAttrsNotDecode, aliasMap)
           }.asInstanceOf[SortOrder]
         }
-        NewSort(sortExprs, sort.global, sort.child)
+        CarbonMergeSort(sortExprs, sort.global, sort.child)
       case agg: Aggregate if !agg.child.isInstanceOf[CarbonDictionaryCatalystDecoder] =>
         val aggExps = agg.aggregateExpressions.map { aggExp =>
           aggExp.transform {

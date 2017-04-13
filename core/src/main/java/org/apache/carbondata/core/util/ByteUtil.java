@@ -26,6 +26,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 import org.apache.carbondata.core.constants.CarbonCommonConstants;
+import org.apache.carbondata.scan.executor.infos.KeyStructureInfo;
 
 /**
  * Util class for byte comparision
@@ -34,6 +35,19 @@ public final class ByteUtil {
 
   private static final int SIZEOF_LONG = 8;
 
+  /**
+   * Converts byte[] to column dictionary integer value
+   */
+  public int convertedChunkData(byte[] dictionary, int columnSize) {
+
+    int dict = 0;
+    for (int i = 0; i < columnSize; i++) {
+      dict <<= 8;
+      dict ^= dictionary[i] & 0xFF;
+    }
+    return dict;
+  }
+  
   private ByteUtil() {
 
   }

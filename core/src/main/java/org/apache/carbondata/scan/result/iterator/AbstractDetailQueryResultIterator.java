@@ -67,10 +67,6 @@ public abstract class AbstractDetailQueryResultIterator extends CarbonIterator {
   protected AbstractDataBlockIterator dataBlockIterator;
   //TODO for sort
   //protected List<DataBlockForSort> dataBlocksList = new ArrayList<DataBlockForSort>();
-  
-
-
-
 protected boolean nextBatch = false;
   /**
    * total time scan the blocks
@@ -204,35 +200,6 @@ protected boolean nextBatch = false;
     }
     return null;
   }
-  
-
-  
- /* public BlocksChunkHolder abstractDataBlockIterator1(BlockExecutionInfo blockExecutionInfo,
-	      FileHolder fileReader, int batchSize, QueryStatisticsModel queryStatisticsModel) {
-	   // this.blockExecutionInfo = blockExecutionInfo;
-	    CarbonIterator<DataRefNode> dataBlockIterator = new BlockletIterator(blockExecutionInfo.getFirstDataBlock(),
-	        blockExecutionInfo.getNumberOfBlockToScan());
-	    BlocksChunkHolder  blocksChunkHolder = new BlocksChunkHolder(blockExecutionInfo.getTotalNumberDimensionBlock(),
-	        blockExecutionInfo.getTotalNumberOfMeasureBlock());
-	    blocksChunkHolder.setFileReader(fileReader);
-
-	    if (blockExecutionInfo.getFilterExecuterTree() != null) {
-	      blockletScanner = new FilterScanner(blockExecutionInfo, queryStatisticsModel);
-	    } else {
-	      blockletScanner = new NonFilterScanner(blockExecutionInfo);
-	    }
-	    if (blockExecutionInfo.isRawRecordDetailQuery()) {
-	      this.scannerResultAggregator =
-	          new RawBasedResultCollector(blockExecutionInfo);
-	    } else {
-	      this.scannerResultAggregator =
-	          new DictionaryBasedResultCollector(blockExecutionInfo);
-	    }
-	    this.batchSize = batchSize;
-	    this.queryStatisticsModel = queryStatisticsModel;
-	  }
-  
-  */
 
   protected void initQueryStatiticsModel() {
     this.queryStatisticsModel = new QueryStatisticsModel();
